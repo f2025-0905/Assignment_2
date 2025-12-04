@@ -39,7 +39,7 @@ int main() {
     }
     
     
-       int option, freeSeat;
+       int option, freeSeat = 1;
       
        cout << "What do you want?\n";
        cout << "1. Reserve a seat\n";
@@ -51,15 +51,38 @@ int main() {
         switch (option){
             case 1: cout << "Enter seat number to reserve: ";
                 cin >> seatNumber;
+                while (reserveSeats [seatNumber/10][seatNumber%10] == 'R' || seatNumber/10 >= rows || seatNumber%10 > columns){
+                    if (reserveSeats [seatNumber/10][seatNumber%10] == 'R' ){
+                        cout << seatNumber << " is already reserved\n";
+                        cout << " Enter seat number to reserve: ";
+                       cin >> seatNumber;
+                    } else if (seatNumber/10 >= rows || seatNumber%10 > columns) {
+                        cout << seatNumber << " is an invalid seat number\n";
+                        cout << "Enter seat number to reserve: ";
+                       cin >> seatNumber;
+                    }
+                } 
                 reserveSeats [seatNumber/10][seatNumber%10] = 'R';
             break;
             case 2: cout << "Enter seat number to unreserve: ";
-                cin >> freeSeat;
-                reserveSeats [freeSeat/10][freeSeat%10] = 'F';
+                cin >> seatNumber;
+                while (reserveSeats [seatNumber/10][seatNumber%10] == 'F' || seatNumber/10 >= rows || seatNumber%10 > columns){
+                    if (reserveSeats [seatNumber/10][seatNumber%10] == 'F' ){
+                        cout << seatNumber << " is already free\n";
+                        cout << " Enter seat number to free: ";
+                       cin >> seatNumber;
+                    } else if (seatNumber/10 >= rows || seatNumber%10 > columns) {
+                        cout << seatNumber << " is an invalid seat number\n";
+                        cout << "Enter seat number to free: ";
+                       cin >> seatNumber;
+                    }
+                }
+                reserveSeats [seatNumber/10][seatNumber%10] = 'F';
             break;
             case 0: runLoop = false;
             break;
-            default: cout << "Invalid Option";
+            default: cout << "Invalid Option\n";
+            break;
         }
     }
     
