@@ -12,13 +12,16 @@ void emptySeats(int r, int c, vector<vector<char>>& reserveSeats){
 }
 
 // First show complete theater seating plan and seats numbers
-void displaySeats(int r, int c, vector<vector<char>>& reserveSeats){
+void displaySeats(int r, int c, int freeSeat, int reservedSeat, vector<vector<char>>& reserveSeats){
     for (int i = 0; i < r; i++){
         for (int j = 0; j < c; j++){
             cout << "(" << i << "-" << j << " " << reserveSeats [i][j] <<")  ";
         }
     cout << "\n";
     }
+    cout << "\n";
+    cout << "Total free seats= " << freeSeat << endl;
+    cout << "Total Reserved Seats= " << reservedSeat << endl;
     
 }
 
@@ -112,7 +115,7 @@ int main() {
     emptySeats(rows, columns, reserveSeats);
     
     // Display Seats Plan
-    displaySeats(rows, columns, reserveSeats);
+    displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
     cout << "\n";
     // Ask user for number of seats
     cout << "How many seats you needed?\n";
@@ -125,9 +128,11 @@ int main() {
     int userAmount = 0;
     for (int i = 1; i <= numOfSeats; i++){
         reserveFunction(rows, columns, rowIn, columnIn, reserveSeats);
+        reservedSeats++;
+        freeSeats--;
         userAmount += seatPrice(rowIn);
         totalAmount += seatPrice(rowIn);
-        displaySeats(rows, columns, reserveSeats);
+        displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
         cout << "\n";
         cout <<"Your Total bill = " << userAmount << endl;
     }
@@ -157,15 +162,19 @@ int main() {
                     userAmount = 0;
                     for (int i = 1; i <= numOfSeats; i++){ 
                        reserveFunction(rows, columns,  rowIn, columnIn, reserveSeats);
+                       reservedSeats++;
+                       freeSeats--;
                        userAmount += seatPrice(rowIn);
                        totalAmount += seatPrice(rowIn);
-                       displaySeats(rows, columns, reserveSeats);
+                       displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
                        cout << "\n";
                        cout <<"Your Total bill = " << userAmount << endl;
                     }
             break;
             case 2: freeFunction(rows, columns, rowIn, columnIn, reserveSeats);
-                    displaySeats(rows, columns, reserveSeats);
+                    reservedSeats--;
+                    freeSeats++;
+                    displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
                     totalAmount -= seatPrice(rowIn);
             break;
             case 3: cout << "Total sold out amount= " << totalAmount << endl;
