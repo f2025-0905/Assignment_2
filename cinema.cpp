@@ -19,7 +19,25 @@ void reserveFunction(int r, int c, int seatNum, vector<vector<char>>& reserveSea
             } 
             reserveSeats [seatNum/10][seatNum%10] = 'R';
                
-}
+    }
+    
+void freeFunction(int r, int c, int seatNum, vector<vector<char>>& reserveSeats){
+    cout << "Enter seat number to unreserve: ";
+                cin >> seatNum;
+                while (reserveSeats [seatNum/10][seatNum%10] == 'F' || seatNum/10 >= r || seatNum%10 > c){
+                    if (reserveSeats [seatNum/10][seatNum%10] == 'F' ){
+                        cout << seatNum << " is already free\n";
+                        cout << " Enter seat number to free: ";
+                       cin >> seatNum;
+                    } else if (seatNum/10 >= r || seatNum%10 > c) {
+                        cout << seatNum << " is an invalid seat number\n";
+                        cout << "Enter seat number to free: ";
+                       cin >> seatNum;
+                    }
+                }
+                reserveSeats [seatNum/10][seatNum%10] = 'F';
+    }
+    
 
 int main() {
     
@@ -51,9 +69,6 @@ int main() {
     
     bool runLoop = true;
     
-    
-    
-    // Run Loop to reserve and unreserve seats
     while (runLoop){
         
     for (int i = 0; i < rows; i++){
@@ -64,7 +79,7 @@ int main() {
     }
     
     // Menu
-       int option, freeSeat = 1;
+       int option;
       
        cout << "What do you want?\n";
        cout << "1. Reserve a seat\n";
@@ -74,22 +89,9 @@ int main() {
        cin >> option;
     
         switch (option){
-            case 1:
+            case 1:reserveFunction(rows, columns, seatNumber, reserveSeats);
             break;
-            case 2: cout << "Enter seat number to unreserve: ";
-                cin >> seatNumber;
-                while (reserveSeats [seatNumber/10][seatNumber%10] == 'F' || seatNumber/10 >= rows || seatNumber%10 > columns){
-                    if (reserveSeats [seatNumber/10][seatNumber%10] == 'F' ){
-                        cout << seatNumber << " is already free\n";
-                        cout << " Enter seat number to free: ";
-                       cin >> seatNumber;
-                    } else if (seatNumber/10 >= rows || seatNumber%10 > columns) {
-                        cout << seatNumber << " is an invalid seat number\n";
-                        cout << "Enter seat number to free: ";
-                       cin >> seatNumber;
-                    }
-                }
-                reserveSeats [seatNumber/10][seatNumber%10] = 'F';
+            case 2: freeFunction(rows, columns, seatNumber, reserveSeats);
             break;
             case 0: runLoop = false;
             break;
