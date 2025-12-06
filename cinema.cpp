@@ -43,67 +43,60 @@ int seatPrice(int rowIn){
 }
 
 // change the availability of seat to reserve
-void reserveFunction(int r, int c,vector<vector<char>>& reserveSeats){
+void reserveFunction(int r, int c, int& rowIn, int& columnIn, vector<vector<char>>& reserveSeats){
     
-        int rowIn, columnIn;
-        cout << "Enter row number to reserve seat: ";
-        cin >> rowIn;
-    
-        cout << "Enter column number to reserve seat: ";
-        cin >> columnIn;
-        while (rowIn >= r || columnIn >= c || reserveSeats [rowIn][columnIn] == 'R' ){
-            if (reserveSeats [rowIn][columnIn] == 'R' ){
-                    cout << rowIn << columnIn << " is already reserved\n";
-                    cout << "Enter row number to reserve seat: ";
-                    cin >> rowIn;
-    
-                    cout << "Enter column number to reserve seat: ";
-                    cin >> columnIn;
-                } else if (rowIn >= r || columnIn > c) {
-                    cout << rowIn << columnIn << " is an invalid seat number\n";
-                    cout << "Enter row number to reserve seat: ";
-                    cin >> rowIn;
-    
-                    cout << "Enter column number to reserve seat: ";
-                    cin >> columnIn;
+        cout << "Enter row and column to reserve seat: ";
+        cin >> rowIn >> columnIn;
+
+        while (true) {
+            if (rowIn >= r || columnIn >= c) {
+                cout << rowIn << columnIn << " is an invalid seat number\n";
+                cout << "Enter row and column: ";
+                cin >> rowIn >> columnIn;
+                continue;
             }
-        }
-        reserveSeats [rowIn][columnIn] = 'R';
+
+            if (reserveSeats[rowIn][columnIn] == 'R') {
+                cout << rowIn << columnIn << " is already reserved\n";
+                cout << "Enter row and column: ";
+                cin >> rowIn >> columnIn;
+                continue;
+            }
+        reserveSeats[rowIn][columnIn] = 'R';
+        break;
+    }
     }   
     
     
     // change the availibility of seat to free
-void freeFunction(int r, int c, vector<vector<char>>& reserveSeats){
-        int rowIn, columnIn;
-        cout << "Enter row number to free seat: ";
-        cin >> rowIn;
-    
-        cout << "Enter column number to free seat: ";
-        cin >> columnIn;
-                while (reserveSeats [rowIn][columnIn] == 'F' || rowIn >= r || columnIn >= c){
-                    if (reserveSeats [rowIn][columnIn] == 'F' ){
-                        cout << rowIn << columnIn << " is already free\n";
-                        cout << "Enter row number to free seat: ";
-                        cin >> rowIn;
-    
-                        cout << "Enter column number to free seat: ";
-                        cin >> columnIn;
-                    } else if (rowIn >= r || columnIn >= c) {
-                        cout << rowIn << columnIn << " is an invalid seat number\n";
-                        cout << "Enter row number to free seat: ";
-                        cin >> rowIn;
-    
-                        cout << "Enter column number to free seat: ";
-                       cin >> columnIn;
-                    }
-                }
-                reserveSeats [rowIn][columnIn] = 'F';
+void freeFunction(int r, int c, int& rowIn, int& columnIn, vector<vector<char>>& reserveSeats){
+        
+        cout << "Enter row and column to free seat: ";
+        cin >> rowIn >> columnIn;
+        
+        while (true) {
+            if (rowIn >= r || columnIn >= c) {
+                cout << rowIn << columnIn << " is an invalid seat number\n";
+                cout << "Enter row and column: ";
+                cin >> rowIn >> columnIn;
+                continue;
+            }
+
+            if (reserveSeats[rowIn][columnIn] == 'F') {
+                cout << rowIn << columnIn << " is already free\n";
+                cout << "Enter row and column: ";
+                cin >> rowIn >> columnIn;
+                continue;
+            }
+        reserveSeats[rowIn][columnIn] = 'F';
+        break;
     }
+}
     
 
 int main() {
     
-    int rows, columns, numOfSeats, rowIn, columnIn, totalAmount = 0,;
+    int rows, columns, numOfSeats, rowIn, columnIn, totalAmount = 0;
     
     cout << "Enter the number of rows: ";
     cin >> rows;
@@ -111,7 +104,7 @@ int main() {
     cout << "Enter the number of columns: ";
     cin >> columns;
     
-    int reserveSeats = (rows*columns), freeSeats = 
+    int freeSeats = (rows*columns), reservedSeats = 0;
     cout << "\n";
     vector<vector<char>> reserveSeats (rows, vector<char>(columns));
     
@@ -131,20 +124,17 @@ int main() {
     // Enter seats to reserve and show amounts
     int userAmount = 0;
     for (int i = 1; i <= numOfSeats; i++){
-        cout << "Enter row number to reserve seat no " << i << ": ";
-        cin >> rowIn;
-        cout << "Enter column number to reserve seat no "<< i << ": ";
-        cin >> columnIn;
-        reserveSeats [rowIn][columnIn] = 'R';
+        reserveFunction(rows, columns, rowIn, columnIn, reserveSeats);
         userAmount += seatPrice(rowIn);
         totalAmount += seatPrice(rowIn);
+        displaySeats(rows, columns, reserveSeats);
         cout << "\n";
         cout <<"Your Total bill = " << userAmount << endl;
     }
     
     bool runLoop = true;
     do{
-        displaySeats(rows, columns, reserveSeats);
+        
     
        // Menu
        int option;
@@ -166,14 +156,16 @@ int main() {
                     cin >> numOfSeats;
                     userAmount = 0;
                     for (int i = 1; i <= numOfSeats; i++){ 
-                       reserveFunction(rows, columns, reserveSeats);
+                       reserveFunction(rows, columns,  rowIn, columnIn, reserveSeats);
                        userAmount += seatPrice(rowIn);
                        totalAmount += seatPrice(rowIn);
+                       displaySeats(rows, columns, reserveSeats);
                        cout << "\n";
                        cout <<"Your Total bill = " << userAmount << endl;
                     }
             break;
-            case 2: freeFunction(rows, columns, reserveSeats);
+            case 2: freeFunction(rows, columns, rowIn, columnIn, reserveSeats);
+                    displaySeats(rows, columns, reserveSeats);
                     totalAmount -= seatPrice(rowIn);
             break;
             case 3: cout << "Total sold out amount= " << totalAmount << endl;
@@ -187,4 +179,4 @@ int main() {
     
     
     return 0;
-}        
+}
