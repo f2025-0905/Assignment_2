@@ -51,7 +51,7 @@ void reserveFunction(int r, int c,vector<vector<char>>& reserveSeats){
     
         cout << "Enter column number to reserve seat: ";
         cin >> columnIn;
-        while (reserveSeats [rowIn][columnIn] == 'R' || rowIn >= r || columnIn >= c){
+        while (rowIn >= r || columnIn >= c || reserveSeats [rowIn][columnIn] == 'R' ){
             if (reserveSeats [rowIn][columnIn] == 'R' ){
                     cout << rowIn << columnIn << " is already reserved\n";
                     cout << "Enter row number to reserve seat: ";
@@ -103,13 +103,15 @@ void freeFunction(int r, int c, vector<vector<char>>& reserveSeats){
 
 int main() {
     
-    int rows, columns, numOfSeats, totalAmount = 0;
+    int rows, columns, numOfSeats, rowIn, columnIn, totalAmount = 0,;
     
     cout << "Enter the number of rows: ";
     cin >> rows;
     
     cout << "Enter the number of columns: ";
     cin >> columns;
+    
+    int reserveSeats = (rows*columns), freeSeats = 
     cout << "\n";
     vector<vector<char>> reserveSeats (rows, vector<char>(columns));
     
@@ -129,7 +131,6 @@ int main() {
     // Enter seats to reserve and show amounts
     int userAmount = 0;
     for (int i = 1; i <= numOfSeats; i++){
-        int rowIn, columnIn;
         cout << "Enter row number to reserve seat no " << i << ": ";
         cin >> rowIn;
         cout << "Enter column number to reserve seat no "<< i << ": ";
@@ -140,7 +141,6 @@ int main() {
         cout << "\n";
         cout <<"Your Total bill = " << userAmount << endl;
     }
-    cout << "\n";
     
     bool runLoop = true;
     do{
@@ -149,20 +149,34 @@ int main() {
        // Menu
        int option;
       
+       cout << "\n";
        cout << "What do you want?\n";
        cout << "1. Reserve a seat\n";
        cout << "2. Free a seat\n";
+       cout << "3. Show Total Amount of sold out tickets\n";
        cout << "0. to exit\n";
        cout << "Enter: ";
        cin >> option;
-    
+       cout << "\n";
+       
         switch (option){
             case 1:priceList();
-                   reserveFunction(rows, columns, reserveSeats);
-                   
-                   
+                    cout << "How many seats you needed?\n";
+                    cout << "Number of seats: ";
+                    cin >> numOfSeats;
+                    userAmount = 0;
+                    for (int i = 1; i <= numOfSeats; i++){ 
+                       reserveFunction(rows, columns, reserveSeats);
+                       userAmount += seatPrice(rowIn);
+                       totalAmount += seatPrice(rowIn);
+                       cout << "\n";
+                       cout <<"Your Total bill = " << userAmount << endl;
+                    }
             break;
             case 2: freeFunction(rows, columns, reserveSeats);
+                    totalAmount -= seatPrice(rowIn);
+            break;
+            case 3: cout << "Total sold out amount= " << totalAmount << endl;
             break;
             case 0: runLoop = false;
             break;
@@ -173,4 +187,4 @@ int main() {
     
     
     return 0;
-}
+}        
