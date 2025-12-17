@@ -2,7 +2,15 @@
 #include <vector>
 using namespace std;
 
-// To assign all seats empty for first time
+int rows, columns, rowIn, columnIn, totalAmount = 0;
+void cinemaSize(int& rows, int& columns){
+    cout << "Enter the number of rows: ";
+    cin >> rows;
+    
+    cout << "Enter the number of columns: ";
+    cin >> columns;
+}
+
 void emptySeats(int r, int c, vector<vector<char>>& reserveSeats){
     for (int i = 0; i < r; i++){
         for (int j = 0; j < c; j++){
@@ -10,8 +18,6 @@ void emptySeats(int r, int c, vector<vector<char>>& reserveSeats){
         }
     }
 }
-
-// First show complete theater seating plan and seats numbers
 void displaySeats(int r, int c, int freeSeat, int reservedSeat, vector<vector<char>>& reserveSeats){
     for (int i = 0; i < r; i++){
         for (int j = 0; j < c; j++){
@@ -32,7 +38,6 @@ void priceList(){
     cout << "Last  rows = 350\n";
 }
 
-// find price of selected seat
 int seatPrice(int rowIn){
     int price = 0;
     if (rowIn <= 1){
@@ -45,8 +50,14 @@ int seatPrice(int rowIn){
     return price;
 }
 
-// change the availability of seat to reserve
-void reserveFunction(int r, int c, int& rowIn, int& columnIn, vector<vector<char>>& reserveSeats){
+struct bookData{
+    string userName;
+    string gender;
+    int cnic;
+    int ticketPrice;
+};
+
+void reserveFunction(int r, int c, vector<vector<char>>& reserveSeats, vector<vector<bookData>>& seatData){
     
         cout << "Enter row and column to reserve seat: ";
         cin >> rowIn >> columnIn;
@@ -65,14 +76,20 @@ void reserveFunction(int r, int c, int& rowIn, int& columnIn, vector<vector<char
                 cin >> rowIn >> columnIn;
                 continue;
             }
+        cout << "Enter Your Name: ";
+        cin >> seatData [rowIn][columnIn].userName;
+        cout << "Gender: ";
+        cin >> seatData [rowIn][columnIn].gender;
+        cout << "Enter CNIC Number: ";
+        cin >> seatData [rowIn][columnIn].cnic;
+        seatData [rowIn][columnIn].ticketPrice = seatPrice(rowIn);
         reserveSeats[rowIn][columnIn] = 'R';
+        
         break;
     }
-    }   
+}   
     
-    
-    // change the availibility of seat to free
-void freeFunction(int r, int c, int& rowIn, int& columnIn, vector<vector<char>>& reserveSeats){
+void freeFunction(int r, int c, vector<vector<char>>& reserveSeats){
         
         cout << "Enter row and column to free seat: ";
         cin >> rowIn >> columnIn;
@@ -91,25 +108,36 @@ void freeFunction(int r, int c, int& rowIn, int& columnIn, vector<vector<char>>&
                 cin >> rowIn >> columnIn;
                 continue;
             }
-        reserveSeats[rowIn][columnIn] = 'F';
         break;
     }
+    reserveSeats[rowIn][columnIn] = 'F';
 }
-    
 
-int main() {
-    
-    int rows, columns, numOfSeats, rowIn, columnIn, totalAmount = 0;
-    
-    cout << "Enter the number of rows: ";
-    cin >> rows;
-    
-    cout << "Enter the number of columns: ";
-    cin >> columns;
-    
+void showSeatInfo (vector<vector<bookData>>& seatData,vector<vector<char>>& reserveSeats){
+    cout << "Enter row and column to free seat: ";
+    cin >> rowIn >> columnIn;
+        
+        if (rowIn >= rows || columnIn >= columns) {
+            cout << rowIn << columnIn << " is an invalid seat number\n";
+        }else if (reserveSeats[rowIn][columnIn] == 'F') {
+            cout << rowIn << columnIn << " is a free seat\n";
+        }else {
+            cout << "Seat holder name: " << seatData [rowIn][columnIn].userName << endl;
+            cout << "Seat holder Gender: " << seatData [rowIn][columnIn].gender << endl;
+            cout << "Seat holder CNIC: " << seatData [rowIn][columnIn].cnic << endl;
+            cout << "Ticket Price: " << seatData [rowIn][columnIn].ticketPrice << endl;
+    }
+}
+
+
+void cinemaMenu(){
+    cinemaSize(rows, columns);
     int freeSeats = (rows*columns), reservedSeats = 0;
+    
     cout << "\n";
     vector<vector<char>> reserveSeats (rows, vector<char>(columns));
+    vector<vector<bookData>> seatData(rows, vector<bookData>(columns));
+    
     
     // Get all seats empty
     emptySeats(rows, columns, reserveSeats);
@@ -117,17 +145,12 @@ int main() {
     // Display Seats Plan
     displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
     cout << "\n";
-    // Ask user for number of seats
-    cout << "How many seats you needed?\n";
-    cout << "Number of seats: ";
-    cin >> numOfSeats;
-    cout << "\n";
     priceList();
     cout << "\n";
     // Enter seats to reserve and show amounts
     int userAmount = 0;
-    for (int i = 1; i <= numOfSeats; i++){
-        reserveFunction(rows, columns, rowIn, columnIn, reserveSeats);
+    
+        reserveFunction(rows, columns, reserveSeats, seatData);
         reservedSeats++;
         freeSeats--;
         userAmount += seatPrice(rowIn);
@@ -135,13 +158,10 @@ int main() {
         displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
         cout << "\n";
         cout <<"Your Total bill = " << userAmount << endl;
-    }
+    
     
     bool runLoop = true;
     do{
-        
-    
-       // Menu
        int option;
       
        cout << "\n";
@@ -149,6 +169,7 @@ int main() {
        cout << "1. Reserve a seat\n";
        cout << "2. Free a seat\n";
        cout << "3. Show Total Amount of sold out tickets\n";
+       cout << "4. Show seat holder details\n";
        cout << "0. to exit\n";
        cout << "Enter: ";
        cin >> option;
@@ -156,22 +177,17 @@ int main() {
        
         switch (option){
             case 1:priceList();
-                    cout << "How many seats you needed?\n";
-                    cout << "Number of seats: ";
-                    cin >> numOfSeats;
                     userAmount = 0;
-                    for (int i = 1; i <= numOfSeats; i++){ 
-                       reserveFunction(rows, columns,  rowIn, columnIn, reserveSeats);
-                       reservedSeats++;
-                       freeSeats--;
-                       userAmount += seatPrice(rowIn);
-                       totalAmount += seatPrice(rowIn);
-                       displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
-                       cout << "\n";
-                       cout <<"Your Total bill = " << userAmount << endl;
-                    }
+                    reserveFunction(rows, columns, reserveSeats, seatData);
+                    reservedSeats++;
+                    freeSeats--;
+                    userAmount += seatPrice(rowIn);
+                    totalAmount += seatPrice(rowIn);
+                    displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
+                    cout << "\n";
+                    cout <<"Your Total bill = " << userAmount << endl;
             break;
-            case 2: freeFunction(rows, columns, rowIn, columnIn, reserveSeats);
+            case 2: freeFunction(rows, columns, reserveSeats);
                     reservedSeats--;
                     freeSeats++;
                     displaySeats(rows, columns, freeSeats, reservedSeats, reserveSeats);
@@ -179,12 +195,18 @@ int main() {
             break;
             case 3: cout << "Total sold out amount= " << totalAmount << endl;
             break;
+            case 4: showSeatInfo(seatData, reserveSeats);
+            break;
             case 0: runLoop = false;
             break;
             default: cout << "Invalid Option\n";
             break;
         }
     }while (runLoop);
+}
+    
+int main() {
+    cinemaMenu();
     
     
     return 0;
